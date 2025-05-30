@@ -1,1 +1,8 @@
+openai
+sounddevice
+scipy
+numpy
+noisereduce
+pyvad
+silero_vad
 simpleaudio
