@@ -36,7 +36,12 @@ def play_audio(file_path):
 # === Full conversation loop ===
 import time  # Ensure this is imported at the top
 
+<<<<<<< HEAD
 def conversation_loop(language, speed, voice_sample_path, model="", tts_mode="cv"):
+=======
+def conversation_loop(language, speed, voice_sample_path, model="", tts_mode="cv", transcriber="gpt-whisper1"):
+
+>>>>>>> 6-search-faster-transcribe-method
     print("🎤 Voice conversation started. Press Ctrl+C to stop.")
     try:
         while True:
@@ -47,6 +52,7 @@ def conversation_loop(language, speed, voice_sample_path, model="", tts_mode="cv
                 continue
 
             latency_start = time.time()  # ⏱️ Start timing after speech ends
+<<<<<<< HEAD
 
             # Transcription
             t0 = time.time()
@@ -56,6 +62,17 @@ def conversation_loop(language, speed, voice_sample_path, model="", tts_mode="cv
             t1 = time.time()
             print(f"⏱️ Transcription latency: {t1 - t0:.2f} sec")
 
+=======
+
+            # Transcription
+            t0 = time.time()
+            print("🔠 Transcribing...")
+            user_text = transcribe_audio(audio_path, transcriber)
+            print("📝 You said:", user_text)
+            t1 = time.time()
+            print(f"⏱️ Transcription latency: {t1 - t0:.2f} sec")
+
+>>>>>>> 6-search-faster-transcribe-method
             # GPT Response
             t0 = time.time()
             print("🤖 Getting GPT response...")
@@ -114,6 +131,12 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="", help="Optional voice model")
     parser.add_argument("--tts", type=str, choices=["no", "cv", "sr"], default="cv",
                         help="TTS mode: 'no' (text only), 'cv' (CloneVoice), 'sr' (SpeechRecognition/pyttsx3)")
+<<<<<<< HEAD
+=======
+    parser.add_argument("--transcriber", type=str, choices=["gpt-4o", "gpt-4o-mini", "gpt-whisper1", "faster-whisper"], default="gpt-whisper1",
+                    help="Transcription engine to use.")
+
+>>>>>>> 6-search-faster-transcribe-method
 
     args = parser.parse_args()
 
@@ -121,4 +144,8 @@ if __name__ == "__main__":
     if args.tts == "cv" and not args.voice:
         parser.error("--voice is required when --tts=cv")
 
+<<<<<<< HEAD
     conversation_loop(args.language, args.speed, args.voice, args.model, args.tts)
+=======
+    conversation_loop(args.language, args.speed, args.voice, args.model, args.tts, args.transcriber)
+>>>>>>> 6-search-faster-transcribe-method
