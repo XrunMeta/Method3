@@ -12,6 +12,7 @@ from openai import OpenAI
 import requests
 import shutil
 import hashlib
+import pyttsx3
 
 # === Paths ===
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -194,7 +195,16 @@ def generate_gpt_response_audio(system_prompt, user_prompt, output_path=None, vo
 
     return output_path
 
-
+def generate_speechrecognition_tts(text):
+    try:
+        engine = pyttsx3.init()
+        tmp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+        engine.save_to_file(text, tmp_wav.name)
+        engine.runAndWait()
+        return tmp_wav.name
+    except Exception as e:
+        print(f"pyttsx3 TTS failed: {e}")
+        return None
 
 
 # === Main Loop ===
