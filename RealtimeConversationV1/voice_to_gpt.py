@@ -12,6 +12,8 @@ from openai import OpenAI
 import requests
 import shutil
 import hashlib
+import pyttsx3
+from faster_whisper import WhisperModel
 
 # === Paths ===
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -110,14 +112,30 @@ def record_audio_vad():
     return tmp_wav.name
 
 # === Transcription ===
-def transcribe_audio(file_path):
-    with open(file_path, "rb") as f:
-        transcription = openai.audio.transcriptions.create(
-            model="gpt-4o-transcribe",
-            file=f,
-            response_format="text"
-        )
-    return transcription
+def transcribe_audio(file_path, mode="gpt-4o"):
+    if mode in ["gpt-whisper1", "gpt-4o", "gpt-4o-mini"]:
+        if mode == "gpt-4o":
+            model_name = "gpt-4o-transcribe"
+        elif mode == "gpt-4o-mini":
+            model_name = "gpt-4o-mini-transcribe"
+        else:
+            model_name = "whisper-1"
+        with open(file_path, "rb") as f:
+            transcription = openai.audio.transcriptions.create(
+                model=model_name,
+                file=f,
+                response_format="text"
+            )
+        return transcription
+
+    elif mode == "faster-whisper":
+        model = WhisperModel("large-v2", compute_type="auto")
+        segments, _ = model.transcribe(file_path, beam_size=5)
+        return " ".join([seg.text for seg in segments])
+
+    else:
+        raise ValueError(f"Unknown transcription mode: {mode}")
+
 
 # === GPT Call with System/User Prompt ===
 def generate_gpt_response(system_prompt, user_prompt):
@@ -136,7 +154,7 @@ def generate_gpt_response_audio(system_prompt, user_prompt, output_path=None, vo
 
     # === 1. Generate GPT text response ===
     chat_response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",  # gpt-4o-mini gpt-4o
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -194,7 +212,16 @@ def generate_gpt_response_audio(system_prompt, user_prompt, output_path=None, vo
 
     return output_path
 
-
+def generate_speechrecognition_tts(text):
+    try:
+        engine = pyttsx3.init()
+        tmp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+        engine.save_to_file(text, tmp_wav.name)
+        engine.runAndWait()
+        return tmp_wav.name
+    except Exception as e:
+        print(f"pyttsx3 TTS failed: {e}")
+        return None
 
 
 # === Main Loop ===
