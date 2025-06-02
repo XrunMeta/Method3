@@ -1,0 +1,5 @@
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+Request->SetURL("http://localhost:8000/talk/");
+Request->SetVerb("POST");
+Request->SetHeader("Content-Type", "multipart/form-data");
+// Append file and form fields to request...
