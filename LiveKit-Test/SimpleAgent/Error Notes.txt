@@ -1,0 +1,4 @@
+- Latest livekit agent module contains error in ClientSession
+- Tried to fix but it made chain errors
+- Installing old module version is not supported by current service
+- Will skip this module for now until get dev fix update

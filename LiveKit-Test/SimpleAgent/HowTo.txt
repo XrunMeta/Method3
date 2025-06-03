@@ -1,0 +1,10 @@
+Setup API Keys
+Open and insert your api key to .env file
+
+Download model files
+To use the turn-detector, silero, or noise-cancellation plugins, you first need to download the model files:
+python agent.py download-files
+
+Speak to your agent
+Start your agent in console mode to run inside your terminal:
+python agent.py console
